@@ -1,0 +1,197 @@
+<!--
+  Generated template for the ProdukDetailPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+	<ion-navbar>
+		<ion-title>Detail Barang</ion-title>
+		<ion-buttons end>
+      <button ion-button icon-only (click)="setting()">
+    		<ion-icon name="md-settings" style="color: black"></ion-icon>
+      </button>
+    </ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+
+<ion-content>
+	<ion-grid style="padding-bottom: 0;">
+		<ion-row class="c-barang">
+			<ion-col col-sm-6 col-12>
+				<!-- <ion-card> -->
+					<div class="title">Kode Barang</div>
+					<div>:</div>
+					<div class="value"><b>{{barang.kode_barang}}</b></div>
+				<!-- </ion-card> -->
+			</ion-col>
+			<ion-col col-sm-6 col-12>
+				<!-- <ion-card> -->
+					<div class="title">Nama Barang</div>
+					<div>:</div>
+					<div class="value"><b>{{barang.nama_barang}}</b></div>
+				<!-- </ion-card> -->
+			</ion-col>
+			<ion-col col-sm-6 col-12>
+				<!-- <ion-card> -->
+					<div class="title">Kelompok</div>
+					<div>:</div>
+					<div class="value"><b>{{barang.nama_kelompok}}</b></div>
+				<!-- </ion-card> -->
+			</ion-col>
+			<ion-col col-sm-6 col-12>
+				<!-- <ion-card> -->
+					<div class="title">Sub Kelompok</div>
+					<div>:</div>
+					<div class="value"><b>{{barang.nama_subkelompok}}</b></div>
+				<!-- </ion-card> -->
+			</ion-col>
+		</ion-row>
+		<ion-row class="c-detail-barang">
+			<ion-col style="padding-bottom: 0;">
+				<ion-segment [(ngModel)]="segmentDetailBarang" swipeSegment>
+					<ion-segment-button value="informasi">
+						Informasi Umum
+					</ion-segment-button>
+					<ion-segment-button value="campuran">
+						Harga Campuran
+					</ion-segment-button>
+				</ion-segment>
+
+				<div class="c-segment-b" [ngSwitch]="segmentDetailBarang">
+					<div *ngSwitchCase="'informasi'">
+						<ion-searchbar [(ngModel)]="textCari" (ionInput)="cariOnInput()" (ionCancel)="cariOnCancel()" (keypress)="inputPress($event)" style="flex: 0; flex: 0; border-bottom: 1px solid #488aff; z-index: 10;"></ion-searchbar>
+						<ion-content class="content-produk" drag-content="false">
+							<ion-refresher (ionRefresh)="refresh($event)">
+								<ion-refresher-content></ion-refresher-content>
+							</ion-refresher>
+							<ion-grid style="overflow: auto;">
+								<ion-row>
+									<ion-col col-lg-3 col-md-4 col-sm-6 col-12 *ngFor="let v of varianUi;">
+										<ion-card (click)="detailVarian(v)">
+											<div class="c-varian">
+												<div class="title">Warna</div><div>:</div><div class="value"><b>{{v.warna? v.warna : '-'}}</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title">Satuan</div><div>:</div><div class="value"><b>{{v.satuan? v.satuan : '-'}}</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title">Ukuran</div><div>:</div><div class="value"><b>{{v.meter? v.meter : '-'}}</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title">Harga</div><div>:</div>
+												<div *ngIf="v.harga" class="value"><b>{{v.harga | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+												<div *ngIf="!v.harga" class="value"><b>-</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title">Diskon</div><div>:</div>
+												<div *ngIf="v.diskon_rupiah" class="value"><b>{{v.diskon_rupiah | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+												<div *ngIf="!v.diskon_rupiah" class="value"><b>-</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title">Stok Gudang</div><div>:</div><div class="value"><b>{{v.stok[0]? v.stok[0].id_lokasi == '1'? v.stok[0].stok_gudang : v.stok[1]? v.stok[1].stok_gudang : '-' : '-'}}</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title">Stok Toko</div><div>:</div><div class="value"><b>{{v.stok[0]? v.stok[0].id_lokasi == '2'? v.stok[0].stok_gudang : v.stok[1]? v.stok[1].stok_gudang : '-' : '-'}}</b></div>
+											</div>
+											<!-- <div class="c-varian">
+												<div class="title">Harga Min</div><div>:</div>
+												<div *ngIf="v.harga_minimum" class="value"><b>{{v.harga_minimum | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+												<div *ngIf="!v.harga_minimum" class="value"><b>-</b></div>
+											</div> -->
+											<div class="c-barcode">
+												<ngx-barcode [bc-value]="v.kode_barcode_varian" [bc-height]="40" [bc-width]="1.3" [bc-display-value]="true"></ngx-barcode>
+											</div>
+										</ion-card>
+									</ion-col>
+								</ion-row>
+							</ion-grid>
+						</ion-content>
+					</div>
+					<div *ngSwitchCase="'campuran'">
+						<ion-content class="content-produk" drag-content="false">
+							<ion-refresher (ionRefresh)="refresh($event)">
+								<ion-refresher-content></ion-refresher-content>
+							</ion-refresher>
+							<ion-grid>
+								<ion-row>
+									<ion-col col-md-4 col-sm-6 col-12 *ngFor="let c of campuran;">
+										<ion-card>
+											<div class="c-varian">
+												<div class="title" style="min-width: 110px;">Qty</div><div>:</div><div class="value"><b>{{c.qty}}</b></div>
+											</div>
+											<div class="c-varian">
+												<div class="title" style="min-width: 110px;">Harga Campuran</div><div>:</div><div class="value"><b>{{c.harga_jual_campuran | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+											</div>
+										</ion-card>
+									</ion-col>
+								</ion-row>
+							</ion-grid>	
+						</ion-content>
+					</div>
+				</div>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+</ion-content>
+
+<div *ngIf="showDetail" style="position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,.5); z-index: 9;" (click)="showDetail = false"></div>
+<div *ngIf="showDetail" class="modal-varian">
+	<div style="width: 80%;
+    max-height: 80%;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;">
+		<div class="header">Harga Jual</div>
+
+		<ion-segment [(ngModel)]="segmentModal" swipeSegment>
+			<ion-segment-button value="qty">
+				Harga Per Kuantitas
+			</ion-segment-button>
+			<ion-segment-button value="pelanggan">
+				Harga Per Pelanggan
+			</ion-segment-button>
+		</ion-segment>
+		<div [ngSwitch]="segmentModal">
+			<ion-grid *ngSwitchCase="'qty'" style="overflow: auto; margin-bottom: 1px; margin-top: 1px; min-height: 74px;">
+				<ion-row>
+					<ion-col *ngIf="dataDetailVarianQty.length < 1" style="height: 64px; display: flex; align-items: center; justify-content: center;">
+						<b>Data Kosong</b>
+					</ion-col>
+					<ion-col col-lg-4 col-md-4 col-sm-6 col-12 *ngFor="let d of dataDetailVarianQty;">
+						<ion-card>
+							<div class="c-varian">
+								<div class="title">Jumlah Minimal</div><div>:</div><div class="value"><b>{{d.qty}}</b></div>
+							</div>
+							<div class="c-varian">
+								<div class="title">Harga Jual</div><div>:</div><div class="value"><b>{{d.harga_jual  | currency:'Rp. ':'symbol':'.0':'id' }}</b></div>
+							</div>
+						</ion-card>
+					</ion-col>
+				</ion-row>
+			</ion-grid>
+			<ion-grid *ngSwitchCase="'pelanggan'" style="overflow: auto; margin-bottom: 1px; margin-top: 1px; min-height: 74px;">
+				<ion-row>
+					<ion-col *ngIf="dataDetailVarianPelanggan.length < 1" style="height: 64px; display: flex; align-items: center; justify-content: center;">
+						<b>Data Kosong</b>
+					</ion-col>
+					<ion-col col-lg-4 col-md-6 col-sm-6 col-12 *ngFor="let d of dataDetailVarianPelanggan;">
+						<ion-card>
+							<div class="c-varian">
+								<div class="title">Pelanggan</div><div>:</div><div class="value"><b>{{d.kode_pelanggan}} - {{d.nama}}</b></div>
+							</div>
+							<div class="c-varian">
+								<div class="title">Harga</div><div>:</div><div class="value"><b>{{d.harga_diskon  | currency:'Rp. ':'symbol':'.0':'id' }}</b></div>
+							</div>
+						</ion-card>
+					</ion-col>
+				</ion-row>
+			</ion-grid>
+		</div>
+	</div>
+</div>

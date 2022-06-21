@@ -1,0 +1,31 @@
+<!-- <ion-header>
+	<ion-navbar>
+		<ion-title>
+			Return Penjualan
+		</ion-title>
+	</ion-navbar>
+</ion-header> -->
+
+<ion-content>
+	<div class="c-setting" (click)="setting()">
+		<ion-icon name="md-settings"></ion-icon>
+	</div>
+	<div class="c-form">
+		<div class="title">LARIS 32</div>
+		<form (ngSubmit)="login()">
+			<ion-item>
+				<ion-label color="primary" stacked>Username</ion-label>
+				<ion-input placeholder="Tulis Username" [(ngModel)]="username" name="username"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Password</ion-label>
+				<ion-input type="password" placeholder="Tulis Password" [(ngModel)]="password" name="password"></ion-input>
+			</ion-item>
+			<button ion-button class="login-btn">
+				<div *ngIf="!masukLoading" class="text">MASUK</div>
+				<ion-spinner *ngIf="masukLoading"></ion-spinner>
+			</button>
+		</form>
+	</div>
+
+</ion-content>

@@ -1,0 +1,44 @@
+<ion-header>
+	<ion-navbar>
+		<ion-title>
+			Produk
+		</ion-title>
+		<ion-buttons end>
+      <button ion-button icon-only (click)="setting()">
+    		<ion-icon name="md-settings" style="color: black"></ion-icon>
+      </button>
+    </ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content>
+	<div style="padding: 10px 10px 0 10px;">
+		<ion-searchbar [(ngModel)]="textCari" (ionInput)="cariOnInput()" (ionCancel)="cariOnCancel()" (keypress)="inputPress($event)" style="flex: 0;"></ion-searchbar>
+	</div>
+	<ion-content class="content-produk" drag-content="false">
+		<ion-refresher (ionRefresh)="refresh($event)">
+			<ion-refresher-content></ion-refresher-content>
+		</ion-refresher> 
+		<ion-grid>
+			<ion-row>
+				<ion-col col-lg-4 col-md-4 col-sm-6 col-12 offset-0 *ngFor="let b of dataBarangUi; let i = index;">
+					<ion-card class="card-barang">
+						<ion-card-content style="display: flex; flex-direction: column; height: 100%;">
+							<div style="flex: 1;">
+								<div class="c-text"><div class="title">Kode Barang</div><div>:</div><b class="text">{{b.kode_barang}}</b></div>
+								<div class="c-text"><div class="title">Nama Barang</div><div>:</div><b class="text">{{b.nama_barang}}</b></div>
+								<div class="c-text"><div class="title">Kelompok</div><div>:</div><b class="text">{{b.nama_kelompok}}</b></div>
+								<div class="c-text"><div class="title">Sub Kelompok</div><div>:</div><b class="text">{{b.nama_subkelompok}}</b></div>
+								<div class="c-text"><div class="title">Tgl Input</div><div>:</div><b class="text">{{b.date_input}}</b></div>
+								<div class="c-text"><div class="title">Tgl Update</div><div>:</div><b class="text">{{b.date_edit? b.date_edit : '-'}}</b></div>
+							</div>
+							<div class="c-button">
+								<button ion-button (click)="detailBarang(i)">Detail</button>
+							</div>
+						</ion-card-content>
+					</ion-card>
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+	</ion-content>
+</ion-content>

@@ -1,5 +1,14 @@
 {
   "name": "Pos-app",
-  "app_id": "",
-  "type": "ionic-angular"
+  "integrations": {
+    "cordova": {},
+    "capacitor": {}
+  },
+  "type": "ionic-angular",
+  "proxies": [
+    {
+      "path": "/api",
+      "proxyUrl": "http://rsigondanglegi.com/laris/"
+    }
+  ]
 }

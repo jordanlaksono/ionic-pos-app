@@ -1,0 +1,195 @@
+<ion-header>
+	<ion-navbar>
+		<ion-title>
+			Pembelian
+		</ion-title>
+		<ion-buttons end>
+      <button ion-button icon-only (click)="setting()">
+    		<ion-icon name="md-settings" style="color: black"></ion-icon>
+      </button>
+    </ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content>
+	<ion-grid>
+		<ion-row class="row-content">
+			<ion-col class="col-bpb">
+				<div style="display: flex; align-items: center;">
+					<ion-searchbar [(ngModel)]="textCari" (ionInput)="cariOnInput($event)" (ionCancel)="cariOnCancel()" (keypress)="inputPress($event)" style="flex: 1; border-bottom: 2px solid #488aff; margin-bottom: 1px;"></ion-searchbar>
+					<div class="c-btn" style="padding: 0 10px;">
+						<button style="margin-top: 0; padding: 10px 20px; font-weight: bold;" (click)="tambahBpb()">TAMBAH BPB</button>
+					</div>
+				</div>
+
+				<ion-content class="content-produk" drag-content="false">
+					<ion-refresher (ionRefresh)="refresh($event)">
+						<ion-refresher-content></ion-refresher-content>
+					</ion-refresher>
+					<ion-grid>
+						<ion-row>
+							<ion-col col-md-4 col-sm-6 col-12 *ngFor="let b of bpbUi; let i = index;">
+								<ion-card class="card-bpb" [class.nota-pilih]="b.kode_bpb == bpbPilih?.kode_bpb">
+									<ion-card-content>
+										<div class="c-text">
+											<div><b>No Trans </b>: <div class="nota">{{b.notrans}}</div></div>
+											<div><b>Supplier </b>: <div>{{b.nama}}</div></div>
+											<div><b>Coly </b>: <div>{{b.coly}}</div></div>
+											<div><b>Pengiriman </b>: <div style="text-transform: capitalize;">{{b.metode_pengiriman}} {{b.metode_pengiriman == 'ekspedisi'? '-' + b.nama_ekspedisi : ''}}</div></div>
+											<div><b>Tanggal </b>: <div>{{b.tanggal}} {{b.waktu}}</div></div>
+											<div *ngIf="b.metode_pengiriman != 'Cod' && b.metode_pengiriman != 'cod'"><b>Biaya Eksp </b>: <div>{{b.biaya_ekspedisi | currency:'Rp. ':'symbol':'.0':'id'}},-</div></div>
+											<div *ngIf="b.metode_pengiriman == 'Cod' || b.metode_pengiriman == 'cod'"><div>&nbsp;</div></div>
+
+											<div class="c-img">
+												<img [src]="b.image == ''? 'assets/imgs/no_image.jpg' : serverUrlImg + b.image">
+											</div>
+											<div class="c-btn">
+												<button (click)="editBpb(b)">Edit</button>
+											</div>
+										</div>
+									</ion-card-content>
+								</ion-card>
+							</ion-col>
+						</ion-row>
+					</ion-grid>
+				</ion-content>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+	<div *ngIf="openModalUpdate || openModalAdd" style="position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,.4); top: 0; left: 0;" (click)="hideModelUpdate(); hideModelAdd();"></div>
+	<div class="c-modal" [style.transform]="openModalUpdate? 'translateX(0px)' : 'translateX(350px)'">
+		<div style="display: flex; padding: 10px; background: #488aff; color: white;">
+			<ion-icon name="close" (click)="hideModelUpdate()" style="width: 20px; display: flex; align-items: center; justify-content: center;"></ion-icon>
+			<div style="flex: 1; text-align: center; font-weight: bold; font-size: 12pt;">Edit Bpb</div>
+		</div>
+		<div class="c-content">
+			<ion-item>
+				<ion-label color="primary" stacked>No Ekspedisi</ion-label>
+				<ion-input name="no_ekspedisi" placeholder="Tulis No Ekspedisi" [(ngModel)]="bpbPilih.no_ekspedisi"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Nama Supplier</ion-label>
+				<!-- <ion-input name="nama" placeholder="Tulis Nama Supplier" [(ngModel)]="bpbPilih.nama"></ion-input> -->
+				<ion-select name="nama" [(ngModel)]="bpbPilih.kode_supplier">
+					<ion-option value="0">--Pilih Supplier--</ion-option>
+					<ion-option *ngFor="let s of supplierUi;" [value]="s.kode_supplier" [selected]="bpbPilih.kode_supplier == s.kode_supplier">{{s.nama}}</ion-option>
+				</ion-select>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Jumlah Coly</ion-label>
+				<ion-input name="coly" placeholder="Tulis Jumlah Coly" [(ngModel)]="bpbPilih.coly"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Metode Pengiriman</ion-label>
+				<!-- <ion-input name="metode_pengiriman" placeholder="Tulis Metode Pengiriman" [(ngModel)]="bpbPilih.metode_pengiriman"></ion-input> -->
+				<ion-select name="metode_pengiriman" [(ngModel)]="bpbPilih.metode_pengiriman">
+					<ion-option value="ekspedisi" [selected]="bpbPilih.metode_pengiriman == 'ekspedisi'">Ekspedisi</ion-option>
+    			<ion-option value="cod"  [selected]="bpbPilih.metode_pengiriman == 'cod'">COD</ion-option>
+				</ion-select>
+			</ion-item>
+			<ion-item *ngIf="bpbPilih.metode_pengiriman == 'ekspedisi'">
+				<ion-label color="primary" stacked>Nama Ekspedisi</ion-label>
+				<ion-input name="nama_ekspedisi" placeholder="Tulis Nama Ekspedisi" [(ngModel)]="bpbPilih.nama_ekspedisi"></ion-input>
+			</ion-item>
+			<ion-item *ngIf="bpbPilih.metode_pengiriman == 'ekspedisi'">
+				<ion-label color="primary" stacked>Biaya Ekspedisi</ion-label>
+				<!-- <ion-input name="biaya_ekspedisi" placeholder="Tulis Biaya Ekspedisi" [(ngModel)]="bpbPilih.biaya_ekspedisi"></ion-input> -->
+				<div item-content style="display: flex; width: 100%;">
+					<div style="padding-right: 5px; display: flex;justify-content: center;flex-direction: column;text-align: center;font-weight: normal; font-size: 12pt; padding-bottom: 2px; color: #999;">Rp. </div>
+					<input currencyMask type="tel" [options]="{ prefix: '', align: 'left', precision: 0, thousands: '.', allowNegative: false, suffix: ',-' }" name="biayaEkpedisi" placeholder="0,-" [(ngModel)]="bpbPilih.biaya_ekspedisi" style="border: none; font-size: 12pt; border-bottom: 1px solid; padding: 10px 0; width: 100%; background: transparent;"/>
+				</div>
+			</ion-item>
+			<ion-item class="c-ambil-foto">
+				<ion-label color="primary" stacked>Foto</ion-label>
+				<!-- <ion-input name="image" placeholder="Tambahkan Foto" [(ngModel)]="bpbPilih.image"></ion-input> -->
+				<div item-content class="c-btn" style="width: 100%">
+					<button style="width: fit-content" (click)="ambilPhoto()">Ambil Photo</button>
+					<div>
+						<!-- <div *ngIf="selectedFilesNativeUi || bpbPilih?.image" style="position: relative;"><ion-icon name="md-close" style="position: absolute; right: 5px; top: 16px; background: #f53d3d; color: white; padding: 3px 8px 5px 8px; border-radius: 50%;" (click)="hapusGambar()"></ion-icon></div> -->
+						<img class="img-file" [src]="selectedFilesNativeUi? selectedFilesNativeUi : bpbPilih.image == ''? 'assets/imgs/no_image.jpg' : serverUrlImg + bpbPilih?.image">
+					</div>
+
+					<!-- <input type="file" class="custom-file-input" (change)="selectFile($event)"> 
+					<div>
+						<div style="position: relative;"><ion-icon name="md-close" style="position: absolute; right: 5px; top: 16px; background: #f53d3d; color: white; padding: 3px 8px 5px 8px; border-radius: 50%;" (click)="hapusGambar()"></ion-icon></div>
+						<img class="img-file" [src]="selectedFilesUi? selectedFilesUi : bpbPilih.image == ''? 'assets/imgs/no_image.jpg' : serverUrlImg + bpbPilih?.image">
+					</div> -->
+				</div>
+			</ion-item>
+			<br>
+		</div>
+		<div class="c-btn c-simpan">
+			<div style="text-align: center; color: #fff;" (click)="hideModelUpdate()">Batal</div>
+			<button (click)="simpan()" class="bayar-btn">
+				<div *ngIf="!simpanLoading" class="text">SIMPAN</div>
+				<ion-spinner *ngIf="simpanLoading"></ion-spinner>
+			</button>
+		</div>
+	</div>
+
+	<div class="c-modal" [style.transform]="openModalAdd? 'translateX(0px)' : 'translateX(350px)'">
+		<div style="display: flex; padding: 10px; background: #488aff; color: white;">
+			<ion-icon name="close" (click)="hideModelAdd()" style="width: 20px; display: flex; align-items: center; justify-content: center;"></ion-icon>
+			<div style="flex: 1; text-align: center; font-weight: bold; font-size: 12pt;">Tambah Bpb</div>
+		</div>
+		<div class="c-content">
+			<ion-item>
+				<ion-label color="primary" stacked>No Ekspedisi</ion-label>
+				<ion-input placeholder="Tulis No Ekspedisi" [(ngModel)]="baru_no_ekspedisi"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Nama Supplier</ion-label>
+				<!-- <ion-input placeholder="Tulis Nama Supplier" [(ngModel)]="baru_nama"></ion-input> -->
+				<ion-select name="nama" [(ngModel)]="baru_nama">
+					<ion-option value="0" selected>--Pilih Supplier--</ion-option>
+					<ion-option *ngFor="let s of supplierUi;" [value]="s">{{s.nama}}</ion-option>
+				</ion-select>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Jumlah Coly</ion-label>
+				<ion-input placeholder="Tulis Jumlah Coly" [(ngModel)]="baru_coly"></ion-input>
+			</ion-item>
+			<ion-item>
+				<ion-label color="primary" stacked>Metode Pengiriman</ion-label>
+				<!-- <ion-input placeholder="Tulis Metode Pengiriman" [(ngModel)]="baru_metode_pengiriman"></ion-input> -->
+				<ion-select name="metode_pengiriman" [(ngModel)]="baru_metode_pengiriman">
+					<ion-option value="ekspedisi" selected>Ekspedisi</ion-option>
+    			<ion-option value="cod">COD</ion-option>
+				</ion-select>
+			</ion-item>
+			<ion-item *ngIf="baru_metode_pengiriman == 'ekspedisi'">
+				<ion-label color="primary" stacked>Nama Ekspedisi</ion-label>
+				<ion-input placeholder="Tulis Nama Ekspedisi" [(ngModel)]="baru_nama_ekspedisi"></ion-input>
+			</ion-item>
+			<ion-item *ngIf="baru_metode_pengiriman == 'ekspedisi'">
+				<ion-label color="primary" stacked>Biaya Ekspedisi</ion-label>
+				<!-- <ion-input placeholder="Tulis Biaya Ekspedisi" [(ngModel)]="baru_biaya_ekspedisi"></ion-input> -->
+				<div item-content style="display: flex; width: 100%;">
+					<div style="padding-right: 5px; display: flex;justify-content: center;flex-direction: column;text-align: center;font-weight: normal; font-size: 12pt; padding-bottom: 2px;">Rp. </div>
+					<input currencyMask type="tel" [options]="{ prefix: '', align: 'left', precision: 0, thousands: '.', allowNegative: false, suffix: ',-' }" name="biayaEkpedisi" placeholder="0,-" [(ngModel)]="baru_biaya_ekspedisi" style="border: none; font-size: 12pt; border-bottom: 1px solid; padding: 10px 0; width: 100%; background: transparent;"/>
+				</div>
+			</ion-item>
+			<ion-item class="c-ambil-foto">
+				<ion-label color="primary" stacked>Foto</ion-label>
+				<!-- <ion-input placeholder="Tambahkan Foto" [(ngModel)]="baru_image"></ion-input> -->
+				<div item-content class="c-btn" style="width: 100%">
+					<button style="width: fit-content" (click)="ambilPhoto()">Ambil Photo</button>
+					<div>
+						<!-- <div *ngIf="selectedFilesNativeUi || bpbPilih?.image" style="position: relative;"><ion-icon name="md-close" style="position: absolute; right: 5px; top: 16px; background: #f53d3d; color: white; padding: 3px 8px 5px 8px; border-radius: 50%;" (click)="hapusGambar()"></ion-icon></div> -->
+						<img class="img-file" [src]="selectedFilesNativeUi? selectedFilesNativeUi : bpbPilih.image == ''? 'assets/imgs/no_image.jpg' : serverUrlImg + bpbPilih?.image">
+					</div>
+					<!-- <input type="file" class="custom-file-input" (change)="selectFile($event)">
+					<img *ngIf="selectedFilesUi" class="img-file" [src]="selectedFilesUi"> -->
+				</div>
+			</ion-item>
+			<br>
+		</div>
+		<div class="c-btn c-simpan">
+			<div style="text-align: center; color: #fff;" (click)="hideModelAdd()">Batal</div>
+			<button (click)="tambah()" class="bayar-btn">
+				<div *ngIf="!simpanLoading" class="text">SIMPAN</div>
+				<ion-spinner *ngIf="simpanLoading"></ion-spinner>
+			</button>
+		</div>
+	</div>
+</ion-content>

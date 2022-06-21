@@ -1,0 +1,167 @@
+<!--
+  Generated template for the KasbonPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+	<ion-navbar>
+		<ion-title>
+			Kasbon
+		</ion-title>
+		<ion-buttons end>
+      <button ion-button icon-only (click)="setting()">
+    		<ion-icon name="md-settings" style="color: black"></ion-icon>
+      </button>
+    </ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div style="display: flex; align-items: center;">
+		<ion-searchbar [(ngModel)]="textCari" (ionInput)="cariOnInput()" (ionCancel)="cariOnCancel()" (keypress)="inputPress($event)" style="flex: 1; border-bottom: 2px solid #488aff; margin-bottom: 1px;"></ion-searchbar>
+    <div class="c-btn" style="padding: 0 10px;">
+      <button style="margin-top: 0; padding: 10px 20px; font-weight: bold;" (click)="tambahKasbon()">TAMBAH KASBON</button>
+    </div>
+  </div>
+  <ion-content class="content-produk" drag-content="false">
+		<ion-refresher (ionRefresh)="refresh($event)">
+			<ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+		<ion-grid>
+			<ion-row>
+				<ion-col col-lg-4 col-md-4 col-sm-6 col-12 offset-0 *ngFor="let b of kasbonUI; let i = index;">
+					<ion-card class="card-barang">
+						<ion-card-content style="display: flex; flex-direction: column; height: 100%;">
+							<div style="flex: 1;">
+								<div class="c-text"><div class="title">Kode Karyawan</div><div>:</div><b class="text">{{b.kode_karyawan}}</b></div>
+								<div class="c-text"><div class="title">Nama Karyawan</div><div>:</div><b class="text">{{b.nama}}</b></div>
+								<div class="c-text"><div class="title">No Voucher</div><div>:</div><b class="text">{{b.no_voucher}}</b></div>
+								<div class="c-text"><div class="title">Tanggal</div><div>:</div><b class="text">{{b.tanggal}}</b></div>
+								<div class="c-text"><div class="title">Debit</div><div>:</div><b class="text">{{b.debit | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+								<div class="c-text"><div class="title">Kredit</div><div>:</div><b class="text">{{b.kredit | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+							</div>
+
+						</ion-card-content>
+					</ion-card>
+        </ion-col>
+			</ion-row>
+		</ion-grid>
+	</ion-content>
+	<!-- <ion-grid> -->
+		<!-- <ion-row class="row-content">
+			<ion-col class="col-bpb">
+				<div style="display: flex; align-items: center;">
+					<ion-searchbar [(ngModel)]="textCari" (ionInput)="cariOnInput($event)" (ionCancel)="cariOnCancel()" (keypress)="inputPress($event)" style="flex: 1; border-bottom: 2px solid #488aff; margin-bottom: 1px;"></ion-searchbar>
+					<div class="c-btn" style="padding: 0 10px;">
+						<button style="margin-top: 0; padding: 10px 20px; font-weight: bold;" (click)="tambahKasbon()">TAMBAH KASBON</button>
+					</div>
+        </div>
+		<ion-row> -->
+      <!-- <ion-content class="content-produk" drag-content="false">
+      <ion-refresher (ionRefresh)="refresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+				<ion-col col-lg-4 col-md-4 col-sm-6 col-12 offset-0 *ngFor="let b of kasbon; let i = index;">
+					<ion-card class="card-barang">
+						<ion-card-content style="display: flex; flex-direction: column; height: 100%;">
+							<div style="flex: 1;">
+								<div class="c-text"><div class="title">Kode Karyawan</div><div>:</div><b class="text">{{b.kode_karyawan}}</b></div>
+								<div class="c-text"><div class="title">Nama Karyawan</div><div>:</div><b class="text">{{b.nama}}</b></div>
+								<div class="c-text"><div class="title">No Voucher</div><div>:</div><b class="text">{{b.no_voucher}}</b></div>
+								<div class="c-text"><div class="title">Tanggal</div><div>:</div><b class="text">{{b.tanggal}}</b></div>
+								<div class="c-text"><div class="title">Debit</div><div>:</div><b class="text">{{b.debit | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+								<div class="c-text"><div class="title">Kredit</div><div>:</div><b class="text">{{b.kredit | currency:'Rp. ':'symbol':'.0':'id'}}</b></div>
+							</div>
+
+						</ion-card-content>
+					</ion-card>
+        </ion-col>
+      </ion-content>
+			</ion-row>
+      </ion-col>
+    </ion-row>
+  </ion-grid> -->
+
+
+
+  <div class="c-modal" [style.transform]="openModalAdd? 'translateX(0px)' : 'translateX(350px)'">
+		<div style="display: flex; padding: 10px; background: #488aff; color: white;">
+			<ion-icon name="close" (click)="hideModelAdd()" style="width: 20px; display: flex; align-items: center; justify-content: center;"></ion-icon>
+			<div style="flex: 1; text-align: center; font-weight: bold; font-size: 12pt;">Tambah Kasbon</div>
+		</div>
+		<div class="c-content">
+      <ion-item>
+				<ion-label color="primary" stacked>Nama Karyawan</ion-label>
+				<!-- <ion-input placeholder="Tulis Nama Supplier" [(ngModel)]="baru_nama"></ion-input> -->
+				<ion-select name="nama" [(ngModel)]="kasbonPilih.karyawan_id">
+					<ion-option value="0" selected>--Pilih Karyawan--</ion-option>
+					<ion-option *ngFor="let k of Karyawan;" [value]="k.kode_karyawan">{{k.nama}}</ion-option>
+				</ion-select>
+	 </ion-item>
+	  <ion-item>
+				<ion-label color="primary" stacked>No Voucher</ion-label>
+				<ion-input [value]="noVoucher"></ion-input>
+      </ion-item>
+      <ion-item>
+				<ion-label color="primary" stacked>Keuangan</ion-label>
+				<ion-input type="text" [value]="keuangan?.nama_keuangan? keuangan?.nama_keuangan : '-'" disabled (click)="openModalKeuangan()" style="color: black;font-weight: bold;"></ion-input>
+				<ion-input type="hidden" [value]="keuangan?.kode_nama_keuangan ? keuangan?.kode_nama_keuangan : '-'" ></ion-input>
+				<!-- <ion-icon item-content name="md-arrow-dropdown" style="margin-right: 5px; color: #999;"></ion-icon> -->
+	  </ion-item>
+      <ion-item>
+				<ion-label color="primary" stacked>Saldo</ion-label>
+        <ion-input [value]="keuangan?.saldo_keuangan ? keuangan?.saldo_keuangan : '-'" style="color: black;font-weight: bold;" disabled></ion-input>
+
+      </ion-item>
+      <ion-item>
+				<ion-label color="primary" stacked>Jenis Penyesuaian</ion-label>
+
+				<ion-select [(ngModel)]="kasbonPilih.id_penyesuaian">
+				  	<ion-option value="tambah_kasbon" >Tambah Kasbon</ion-option>
+    				<ion-option value="kurangi_kasbon"  >Kurangi Kasbon</ion-option>
+				</ion-select>
+      </ion-item>
+      <ion-item>
+				<ion-label color="primary" stacked>Jumlah</ion-label>
+				<!-- <ion-input [(ngModel)]="kasbonPilih.jumlah"></ion-input> -->
+				<div item-content style="display: flex; width: 100%;">
+					<div style="padding-right: 5px; display: flex;justify-content: center;flex-direction: column;text-align: center;font-weight: normal; font-size: 12pt; padding-bottom: 2px; color: #999;">Rp. </div>
+					<input currencyMask type="tel" [options]="{ prefix: '', align: 'left', precision: 0, thousands: '.', allowNegative: false, suffix: ',-' }" placeholder="0,-" [(ngModel)]="kasbonPilih.jumlah" style="border: none; font-size: 12pt; border-bottom: 1px solid; padding: 10px 0; width: 100%; background: transparent;"/>
+				</div>
+      </ion-item>
+			<br>
+		</div>
+		<div class="c-btn c-simpan">
+			<div style="text-align: center; color: #fff;" (click)="hideModelAdd()">Batal</div>
+			<button (click)="simpan()" class="bayar-btn">
+				<div *ngIf="!simpanLoading" class="text">SIMPAN</div>
+				<ion-spinner *ngIf="simpanLoading"></ion-spinner>
+			</button>
+		</div>
+  </div>
+
+  <div [ngStyle]="showModalKeuangan? {'opacity': '1'} :  {'opacity': '0', 'z-index' : '-1'}" class="c-modal-pelanggan">
+		<div class="modal">
+			<div class="title">Pilih Pelanggan</div>
+			<div class="c-cari">
+				<ion-item>
+					<ion-input (ionChange)="cariKeuangan()" [(ngModel)]="textCariKeuangan" placeholder="cariKeuangan" style="background: #fff;"></ion-input>
+				</ion-item>
+
+			</div>
+			<div class="content">
+
+				<div *ngFor="let pel of jenisKeuanganUI">
+					<input type="radio" [id]="'P-' + pel.kode_nama_keuangan" [value]="pel" [(ngModel)]="keuanganUi">
+					<label [for]="'P-' + pel.kode_nama_keuangan">{{pel.nama_keuangan}} - {{pel.nomor_keuangan}}</label>
+				</div>
+			</div>
+			<div class="button">
+				<div (click)="modalBatal()">Batal</div>
+				<div (click)="modalPelangganOk()">Ok</div>
+			</div>
+		</div>
+	</div>
+</ion-content>
